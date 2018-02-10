@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 设置log4j2的自身log级别为warn -->
+<!-- OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<configuration status="info" monitorInterval="30">
+    <properties>
+        <!-- 日志根路径 -->
+        <property name="LOG_HOME">/data/logs</property>
+        <!-- 项目名称 -->
+        <property name="PROJECT_NAME">jason-netty</property>
+    </properties>
+
+    <appenders>
+        <console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="[${PROJECT_NAME}][%p][%date{yyyy-MM-dd HH:mm:ss.SSS}][%thread]([%c:%line]) - %msg -%n"/>
+        </console>
+        <RollingFile name="RollingFileInfo" fileName="${LOG_HOME}/${PROJECT_NAME}/${PROJECT_NAME}-info.log"
+                     filePattern="${LOG_HOME}/${PROJECT_NAME}/$${date:yyyy-MM-dd}/${PROJECT_NAME}-info-%d{yyyy-MM-dd-HH}.log"
+                     bufferedIO="true"
+                     bufferSize="16384"
+                     immediateFlush="true"
+                     ignoreExceptions="false">
+            <Filters>
+                <ThresholdFilter level="INFO"/>
+                <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout
+                    pattern="[${PROJECT_NAME}]%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="RollingFileWarn" fileName="${LOG_HOME}/${PROJECT_NAME}/${PROJECT_NAME}-warn.log"
+                     filePattern="${LOG_HOME}/${PROJECT_NAME}/$${date:yyyy-MM-dd}/${PROJECT_NAME}-warn-%d{yyyy-MM-dd-HH}.log"
+                     bufferedIO="true"
+                     bufferSize="8192"
+                     immediateFlush="true"
+                     ignoreExceptions="false">
+            <Filters>
+                <ThresholdFilter level="WARN"/>
+                <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout
+                    pattern="[${PROJECT_NAME}]%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="RollingFileError" fileName="${LOG_HOME}/${PROJECT_NAME}/${PROJECT_NAME}-error.log"
+                     filePattern="${LOG_HOME}/${PROJECT_NAME}/$${date:yyyy-MM-dd}/${PROJECT_NAME}-error-%d{yyyy-MM-dd-HH}.log"
+                     bufferedIO="true"
+                     bufferSize="8192"
+                     immediateFlush="true"
+                     ignoreExceptions="false">
+            <ThresholdFilter level="ERROR"/>
+            <PatternLayout
+                    pattern="[${PROJECT_NAME}]%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+    </appenders>
+
+    <loggers>
+
+        <logger name="org.springframework" level="error"/>
+        <logger name="org.apache.http" level="warn"/>
+        <logger name="org.apache.commons.httpclient" level="error"/>
+        <logger name="org.apache.zookeeper" level="error"/>
+        <logger name="druid.sql.Statement" level="debug" additivity="false">
+            <appender-ref ref="Console"/>
+        </logger>
+        <logger name="druid.sql.ResultSet" level="debug" additivity="false">
+            <appender-ref ref="Console"/>
+        </logger>
+
+        <root level="all">
+            <!--<appender-ref ref="RollingFileInfo"/>-->
+            <!--<appender-ref ref="RollingFileWarn"/>-->
+            <!--<appender-ref ref="RollingFileError"/>-->
+            <appender-ref ref="Console"/>
+        </root>
+    </loggers>
+
+</configuration>
